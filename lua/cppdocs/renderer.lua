@@ -169,6 +169,16 @@ function M.render(path)
 
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
+    for line_number, line in ipairs(lines) do
+      local idx = line_number - 1
+      if line:find("std::", 1, true) then
+        vim.api.nvim_buf_add_highlight(buf, -1, "Title", idx, 0, -1)
+      end
+      if line:match("^##") then
+        vim.api.nvim_buf_add_highlight(buf, -1, "Function", idx, 0, -1)
+      end
+    end
+
     vim.bo[buf].buftype = "nofile"
     vim.bo[buf].bufhidden = "wipe"
     vim.bo[buf].swapfile = false
