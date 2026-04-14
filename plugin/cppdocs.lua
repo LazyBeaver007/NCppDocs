@@ -1,37 +1,37 @@
-local indexer = require("../lua.cppdocs.indexer")
-local search = require("../lua.cppdocs.search")
+local indexer = require("cppdocs.indexer")
+local search = require("cppdocs.search")
+local renderer = require("cppdocs.renderer")
 
-local index = nil 
+local index = nil
 
 local function ensure_index()
     if not index then
         index = indexer.build_index("D:/html_book_20190607/reference/en")
     end
-    
 end
 
-vim.api.nvim_create_user_command("CppSearch", function (opts)
-   local query = opts.args 
+vim.api.nvim_create_user_command("CppSearch", function(opts)
+    local query = opts.args
 
-   if query == "" then
-       print("Usage: :CppSearch <query>")
-       return
-   end
-   
-   ensure_index()
+    if query == "" then
+        print("Usage: :CppSearch <query>")
+        return
+    end
 
-   local result = search.search(index,query)
+    ensure_index()
 
-   if #result == 0 then
-       print("No result found")
-       return 
-   end
+    local result = search.search(index, query)
 
-   local best = result[1]
-   print("Opening: "..best.key)
+    if #result == 0 then
+        print("No result found")
+        return
+    end
 
-   vim.cmd("edit " ..best.path)
+    local best = result[1]
+    print("Opening: " .. best.key)
+
+    renderer.render(best.path)
 end, {
-    nargs = 1
+    nargs = 1,
 })
 
