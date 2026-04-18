@@ -20,7 +20,7 @@ local function extract_main(html)
   -- take everything after this div
   local content = html:sub(start)
 
-  -- optionally cut before footer
+  
   local end_pos = content:find('<div class="printfooter"')
   if end_pos then
     content = content:sub(1, end_pos)
