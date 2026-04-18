@@ -16,6 +16,18 @@ Search and view offline C++ reference HTML (e.g. a `cppreference` HTML dump) ins
 }
 ```
 
+## Get the HTML docs
+
+You need an *offline* copy of the C++ reference site in HTML form.
+
+One convenient source is the `cppreference` HTML archive mirror:
+
+```text
+https://github.com/stdman3/cppreference-archive-html
+```
+
+Download an archive from that repo, extract it somewhere, then point `docs_root` at the extracted `reference/en` directory (the folder that contains lots of `*.html` files).
+
 ### Manual install (no plugin manager)
 
 Add this repo to your `runtimepath` (early in startup, before `:CppSearch` is used):
