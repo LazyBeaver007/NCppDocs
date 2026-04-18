@@ -148,6 +148,69 @@ local function strip_tags(text)
   return table.concat(lines, "\n")
 end
 
+local function truncate_top_level_dump(lines)
+  local first_heading = nil
+
+  for i = 1, math.min(#lines, 120) do
+    if lines[i]:match("^##%s+") then
+      first_heading = i
+      break
+    end
+  end
+
+  if not first_heading then
+    return lines
+  end
+
+  local block_end = first_heading - 1
+  local heading_count = 0
+
+  for i = first_heading, #lines do
+    local line = lines[i]
+    if line:match("^##%s+") then
+      heading_count = heading_count + 1
+      block_end = i
+    elseif line == "" then
+      block_end = i
+    else
+      break
+    end
+  end
+
+  local keep_headings = 6
+  if heading_count <= keep_headings then
+    return lines
+  end
+
+  local out = {}
+  for i = 1, first_heading - 1 do
+    table.insert(out, lines[i])
+  end
+
+  local kept = 0
+  for i = first_heading, block_end do
+    local line = lines[i]
+    if line:match("^##%s+") then
+      kept = kept + 1
+      if kept <= keep_headings then
+        table.insert(out, line)
+      end
+    elseif kept <= keep_headings then
+      table.insert(out, line)
+    end
+  end
+
+  table.insert(out, "")
+  table.insert(out, "... " .. (heading_count - keep_headings) .. " more top-level sections omitted ...")
+  table.insert(out, "")
+
+  for i = block_end + 1, #lines do
+    table.insert(out, lines[i])
+  end
+
+  return out
+end
+
 function M.render(path)
     local html = read_files(path)
     if not html then
@@ -159,13 +222,15 @@ function M.render(path)
     local main = extract_main(html)
     local clean = strip_tags(main)
 
-    vim.cmd("vnew")
+    vim.cmd("botright vnew")
     local buf = vim.api.nvim_get_current_buf()
 
     local lines = {}
     for line in clean:gmatch("[^\r\n]+") do
         table.insert(lines,line) 
     end
+
+    lines = truncate_top_level_dump(lines)
 
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 

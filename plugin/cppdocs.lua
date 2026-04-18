@@ -1,12 +1,23 @@
 local indexer = require("cppdocs.indexer")
 local search = require("cppdocs.search")
 local renderer = require("cppdocs.renderer")
+local config = require("cppdocs.config")
 
 local index = nil
 
 local function ensure_index()
     if not index then
-        index = indexer.build_index("D:/html_book_20190607/reference/en")
+        local docs_root = config.get().docs_root
+        if not docs_root or docs_root == "" then
+            print("cppdocs: docs_root is not configured")
+            index = {}
+            return
+        end
+
+        index = indexer.build_index(docs_root)
+        if next(index) == nil then
+            print("cppdocs: no HTML docs found under " .. docs_root)
+        end
     end
 end
 
