@@ -1,4 +1,5 @@
 # cppdocs.nvim
+<img width="1919" height="1053" alt="image" src="https://github.com/user-attachments/assets/d417aaa1-fd2d-4c34-b544-9b3d3b469b14" />
 
 Search and view offline C++ reference HTML (e.g. a `cppreference` HTML dump) inside Neovim.
 
